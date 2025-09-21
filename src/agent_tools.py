@@ -20,7 +20,7 @@ print("--- Initializing Agent Tools ---")
 # --- 1. SETUP SEGMENTATION MODEL ---
 print("🧠 Building and loading segmentation model into memory...")
 # IMPORTANT: Make sure you have the model weights file available at this path.
-MODEL_WEIGHTS_PATH = 'path/to/your/local/best_model.weights.h5' # <-- UPDATE THIS PATH
+MODEL_WEIGHTS_PATH = 'Data\model_weights\Best_model_run_with_derived_metrics_v1.weights.h5' # <-- UPDATE THIS PATH
 
 segmentation_model = None # Define it first
 if os.path.exists(MODEL_WEIGHTS_PATH):
@@ -38,7 +38,7 @@ else:
 
 # --- 2. SETUP RAG RETRIEVER ---
 # This builds the vector database from PDFs in the ./data/medical_papers/ folder.
-RAG_RETRIEVER = build_retriever(papers_path="./data/medical_papers")
+RAG_RETRIEVER = build_retriever(papers_path="Data\Guidelines\Ncnn guideline audlt glioma.pdf")
 
 # --- TOOL DEFINITIONS ---
 

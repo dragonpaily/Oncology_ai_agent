@@ -9,7 +9,7 @@ from agent_tools import all_tools
 
 # --- 2. Handle API Key Locally (same as before) ---
 try:
-    api_key = os.environ.get("GOOGLE_API_KEY", "PASTE_YOUR_API_KEY_HERE")
+    api_key = os.environ.get("GOOGLE_API_KEY", "AIzaSyDRW9cc1piBNJp2_SDlawWVy-QpA6K_lEU")
     genai.configure(api_key=api_key)
     print("✅ Gemini API configured.")
 except Exception as e:
