@@ -8,11 +8,12 @@ import random
 import os
 from PIL import Image
 import nibabel as nib
+import google.generativeai as genai
 
 # --- Import our organized code modules ---
-from src.segmentation.model import build_training_model, InstanceNormalization
-from src.segmentation.utils import Load_nifti, preprocess_sample, analyze_segmentation
-from src.rag_pipeline import build_retriever
+from .segmentation.model import build_training_model, InstanceNormalization
+from .segmentation.utils import Load_nifti, preprocess_sample, analyze_segmentation
+from .rag_pipeline import build_retriever
 from langchain_community.utilities import PubMedAPIWrapper
 
 print("--- Initializing Agent Tools ---")
@@ -20,7 +21,7 @@ print("--- Initializing Agent Tools ---")
 # --- 1. SETUP SEGMENTATION MODEL ---
 print("🧠 Building and loading segmentation model into memory...")
 # IMPORTANT: Make sure you have the model weights file available at this path.
-MODEL_WEIGHTS_PATH = 'Data\model_weights\Best_model_run_with_derived_metrics_v1.weights.h5' # <-- UPDATE THIS PATH
+MODEL_WEIGHTS_PATH = 'Data/model weights/Best_model_run_with_derived_metrics_v1.weights.h5' # <-- UPDATE THIS PATH
 
 segmentation_model = None # Define it first
 if os.path.exists(MODEL_WEIGHTS_PATH):
@@ -38,7 +39,7 @@ else:
 
 # --- 2. SETUP RAG RETRIEVER ---
 # This builds the vector database from PDFs in the ./data/medical_papers/ folder.
-RAG_RETRIEVER = build_retriever(papers_path="Data\Guidelines\Ncnn guideline audlt glioma.pdf")
+RAG_RETRIEVER = build_retriever(papers_path="Data/Guidelines")
 
 # --- TOOL DEFINITIONS ---
 
@@ -49,6 +50,12 @@ def run_segmentation_analysis(t1c_path: str, t1n_path: str, t2f_path: str, t2w_p
     Returns a dictionary with tumor volumes in cubic centimeters (cm3) and centroid coordinates in millimeters (mm).
     """
     print(f"🤖 Tool Called: run_segmentation_analysis...")
+    
+    required_paths = [t1c_path, t1n_path, t2f_path, t2w_path]
+    if not all(required_paths):
+        return {"error": "Tool failed. All four scan paths (T1c, T1n, T2f, T2w) are required for this analysis."}
+    
+    
     if segmentation_model is None:
         return {"error": "Segmentation model is not loaded. Cannot perform analysis."}
     try:

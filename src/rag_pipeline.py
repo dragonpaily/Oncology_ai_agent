@@ -1,10 +1,11 @@
 # In src/rag_pipeline.py
 
-from langchain.vectorstores import Chroma
+from langchain_community.vectorstores import Chroma
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.document_loaders import PyPDFLoader, DirectoryLoader
-from langchain.retrievers import BM25Retriever, EnsembleRetriever
+from langchain_community.document_loaders import PyPDFLoader, DirectoryLoader
+from langchain_community.retrievers import BM25Retriever
+from langchain.retrievers import EnsembleRetriever
 
 def build_retriever(papers_path: str):
     """
