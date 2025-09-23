@@ -85,7 +85,8 @@ def calculate_percentage_change(initial_volume: float, final_volume: float) -> f
 @tool
 def clinical_guideline_retriever_tool(query: str) -> str:
     """
-    Searches a local knowledge base of clinical guidelines and oncology research papers for established information.
+    MUST be used to answer any questions that refer to 'the knowledge base', 'guidelines', 'standard-of-care', or 'protocols'.
+    This tool searches a local knowledge base of trusted clinical oncology documents. Do not answer these types of questions from memory.
     """
     print(f"📚 Tool Called: clinical_guideline_retriever_tool with query: '{query}'")
     retrieved_docs = RAG_RETRIEVER.invoke(query)
