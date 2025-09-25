@@ -11,7 +11,8 @@ import nibabel as nib
 import google.generativeai as genai
 from typing import List
 from nilearn.datasets import fetch_atlas_aal
-import nilearn.regions # We can import the module directly
+import nibabel as nib
+import numpy as np# We can import the module directly
 
 
 # --- Import our organized code modules ---
@@ -182,15 +183,37 @@ def brain_atlas_coordinate_tool(coordinates_mm: List[float]) -> str:
     """
     print(f"🗺️ Tool Called: Real atlas lookup with coords: {coordinates_mm}")
     try:
-        atlas = fetch_atlas_aal()
-        labels = atlas.labels
-        # Call the function using the imported module
-        report = nilearn.regions.get_anat_label(coordinates_mm, labels=labels)
+        # 1. Fetch the AAL atlas data and file path
+        atlas_data = fetch_atlas_aal()
+        atlas_filepath = atlas_data.maps
+
+        # 2. Load the atlas NIfTI image using nibabel
+        atlas_img = nib.load(atlas_filepath)
+
+        # 3. Get the affine matrix that maps voxel space to millimeter space
+        #    and calculate its inverse to go from mm -> voxels
+        inv_affine = np.linalg.inv(atlas_img.affine)
+
+        # 4. Apply the inverse affine to our mm coordinates to get voxel coordinates
+        voxel_coords = nib.affines.apply_affine(inv_affine, coordinates_mm)
         
-        if report and report['label']:
-            result = f"The coordinates fall within the '{report['label']}' region according to the AAL atlas."
+        # 5. Round the voxel coordinates to get integer indices
+        voxel_coords = np.round(voxel_coords).astype(int)
+        x, y, z = voxel_coords
+
+        # 6. Use the integer indices to get the label number from the atlas data
+        label_index = int(atlas_img.get_fdata()[x, y, z])
+
+        # 7. Look up the anatomical name using the label index
+        if label_index < len(atlas_data.labels):
+            label_name = atlas_data.labels[label_index]
         else:
-            result = "The coordinates are outside of any labeled region in the AAL atlas."
+            label_name = "Unknown or No Label"
+
+        if label_name == "Background":
+             result = "The coordinates are in a region with no specific anatomical label (e.g., cerebrospinal fluid)."
+        else:
+            result = f"The coordinates fall within the '{label_name}' region according to the AAL atlas."
 
         print(f"✅ Tool Finished: {result}")
         return result
