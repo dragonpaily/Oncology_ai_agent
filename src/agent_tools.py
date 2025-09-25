@@ -9,6 +9,10 @@ import os
 from PIL import Image
 import nibabel as nib
 import google.generativeai as genai
+from typing import List
+from nilearn.datasets import fetch_atlas_aal
+import nilearn.regions # We can import the module directly
+
 
 # --- Import our organized code modules ---
 from .segmentation.model import build_training_model, InstanceNormalization
@@ -170,6 +174,9 @@ def generate_qualitative_report_tool(initial_scan_path: str, followup_scan_path:
             return "Could not generate report as one or both scan paths were invalid."
     except Exception as e:
         return f"Error running qualitative vision tool: {e}"
+
+
+
 
 # --- Create a convenient list of all tools for the main app ---
 all_tools = [
