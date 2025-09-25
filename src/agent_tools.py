@@ -175,7 +175,27 @@ def generate_qualitative_report_tool(initial_scan_path: str, followup_scan_path:
     except Exception as e:
         return f"Error running qualitative vision tool: {e}"
 
+@tool
+def brain_atlas_coordinate_tool(coordinates_mm: List[float]) -> str:
+    """
+    Takes a list of [X, Y, Z] millimeter coordinates from a brain MRI and returns the probable anatomical region using the AAL atlas.
+    """
+    print(f"🗺️ Tool Called: Real atlas lookup with coords: {coordinates_mm}")
+    try:
+        atlas = fetch_atlas_aal()
+        labels = atlas.labels
+        # Call the function using the imported module
+        report = nilearn.regions.get_anat_label(coordinates_mm, labels=labels)
+        
+        if report and report['label']:
+            result = f"The coordinates fall within the '{report['label']}' region according to the AAL atlas."
+        else:
+            result = "The coordinates are outside of any labeled region in the AAL atlas."
 
+        print(f"✅ Tool Finished: {result}")
+        return result
+    except Exception as e:
+        return f"Error during atlas lookup: {e}"
 
 
 # --- Create a convenient list of all tools for the main app ---
