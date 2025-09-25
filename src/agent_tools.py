@@ -207,4 +207,5 @@ all_tools = [
     oncokb_query_tool,
     histopathology_mutation_analyzer_tool,
     generate_qualitative_report_tool,
+    brain_atlas_coordinate_tool,
 ]
