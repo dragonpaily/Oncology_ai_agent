@@ -184,7 +184,7 @@ def brain_atlas_coordinate_tool(coordinates_mm: List[float]) -> str:
     print(f"🗺️ Tool Called: Real atlas lookup with coords: {coordinates_mm}")
     try:
         # 1. Fetch the AAL atlas data and file path
-        atlas_data = fetch_atlas_aal()
+        atlas_data=fetch_atlas_aal() #helper function from nilearn,first it will check the cache, if necessary it will download, typically a nifti file.
         atlas_filepath = atlas_data.maps
 
         # 2. Load the atlas NIfTI image using nibabel
